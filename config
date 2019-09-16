@@ -1,0 +1,3 @@
+[GENERAL_SETTINGS]
+DATA_PATH: '/home/pi/aethalometer/data'
+FILE_EXT: '.txt'
