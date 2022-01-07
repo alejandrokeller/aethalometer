@@ -40,6 +40,7 @@ $ pip install -r requirements.txt
 |--iOFF         | Do not calculate intervals; plot all datapoints|
 |--intervals CSV| csv file with start and end timestamps columns. First row must be the column names (i.e. "start" and "end"). Uses hourly, minutely, or secondly intervals if this parameteris missing (as defined in config.ini)|
 |--bckey BCKEY  | Selects BC1 through BC7 (and BB for AE33). Default: BC6=880nm|
+| file(s)       | path to file(s) to be plotted. If several files are given, they will be joined into a single dataframe. If empty, the script looks for the latest file in the default data directory defined in the inifile.|  
 
 The calculated averaged interval-data for BC1-BC7 and BB are printed by the command. Use `>` to save the data:
 ```bash
