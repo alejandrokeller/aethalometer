@@ -318,12 +318,16 @@ class Aethalometer(object):
             'optical attenuation 7',
             'massfl'
             ]
+        
+        self.BCKeys = ['BC1', 'BC2', 'BC3', 'BC4', 'BC5', 'BC6', 'BC7']
+        self.BCKey = 'BC6'
 
         if model == 'AE33':
             columns = AE33
             separator = " "
             skiprows = 8
             append_text = ""
+            self.BCKeys.append('BB')
         elif model == 'AE31':
             columns = AE31
             separator = ","
@@ -377,10 +381,6 @@ class Aethalometer(object):
             'BC6': 880,
             'BC7': 950
             }
-
-        self.BCKeys = ['BC1', 'BC2', 'BC3', 'BC4', 'BC5', 'BC6', 'BC7']
-
-        self.BCKey = 'BC6'
 
         #Date(yyyy/MM/dd); Time(hh:mm:ss)
         self.df = pd.read_csv(
