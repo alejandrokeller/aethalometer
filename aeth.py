@@ -4,7 +4,7 @@
 # Aethalometer(datafile, model): Object for to contain datafiles (models 'AE33' or 'AE31')
 # create_plot(y):                function can be used to plot the data
 #                                (one wavelength, use BC6 for eBC at 880nm)
-# calculate_intervals(intervalfile, data): calculates the mean BC value
+# calculate_intervals_csv(intervalfile, data): calculates the mean BC value
 #                                (all wavelengths) for time intervals
 #                                defined on a intervalfile, data is an
 #                                Aethalometer object
@@ -68,6 +68,11 @@ def hour_rounder(t):
     return (t.replace(second=0, microsecond=0, minute=0, hour=t.hour)
                +timedelta(hours=t.minute//30))
 
+def minute_rounder(t):
+    # Rounds to nearest hour by adding a timedelta minute if seconds >= 30
+    return (t.replace(second=0, microsecond=0, minute=t.minute, hour=t.hour)
+               +timedelta(minutes=t.second//30))
+
 def create_plot(y, x=None, yunits='ng/m$^3$', title="Aethalometer", ytitle='eBC'):
     plt.style.use('ggplot')
     register_matplotlib_converters()
@@ -125,7 +130,7 @@ def create_plot(y, x=None, yunits='ng/m$^3$', title="Aethalometer", ytitle='eBC'
     plt.show()
     plt.close()
 
-def calculate_intervals(intervalfile, data, decimals = 0):
+def calculate_intervals_csv(intervalfile, data, decimals = 0):
     df = pd.read_csv(intervalfile,
                      index_col = False,
                      parse_dates=['start','end'])
@@ -136,11 +141,11 @@ def calculate_intervals(intervalfile, data, decimals = 0):
     df = df.set_index('end')
     return df
 
-def calculate_hourly_intervals(data, decimals = 0):
+def calculate_hourly_intervals(data, interval = 1, decimals = 0):
     df = pd.DataFrame(columns=['start','end'])
     tmin = hour_rounder(data.df.first_valid_index())
     tmax = hour_rounder(data.df.last_valid_index()) - timedelta(hours=1)
-    for dt in rrule.rrule(rrule.HOURLY, dtstart=tmin, until=tmax):
+    for dt in rrule.rrule(rrule.HOURLY, interval = interval, dtstart=tmin, until=tmax):
         start = dt
         end = dt+timedelta(hours=1)
         subset = data.getSubset(start, end)
@@ -151,7 +156,38 @@ def calculate_hourly_intervals(data, decimals = 0):
             df.loc[index, key] = value
     df = df.set_index('end')
     return df
-    
+
+def calculate_minutely_intervals(data, interval = 1, decimals = 0):
+    df = pd.DataFrame(columns=['start','end'])
+    tmin = minute_rounder(data.df.first_valid_index())
+    tmax = minute_rounder(data.df.last_valid_index()) - timedelta(minutes=1)
+    for dt in rrule.rrule(rrule.MINUTELY, interval = interval, dtstart=tmin, until=tmax):
+        start = dt
+        end = dt+timedelta(minutes=1)
+        subset = data.getSubset(start, end)
+        index = len(df)
+        df.loc[index, 'start'] = start
+        df.loc[index, 'end'] = end
+        for key, value in subset.mean().round(decimals).iteritems():
+            df.loc[index, key] = value
+    df = df.set_index('end')
+    return df
+
+def calculate_secondly_intervals(data, interval = 10, decimals = 0):
+    df = pd.DataFrame(columns=['start','end'])
+    tmin = minute_rounder(data.df.first_valid_index())
+    tmax = minute_rounder(data.df.last_valid_index()) - timedelta(minutes=1)
+    for dt in rrule.rrule(rrule.SECONDLY, interval = interval, dtstart=tmin, until=tmax):
+        start = dt
+        end = dt+timedelta(minutes=1)
+        subset = data.getSubset(start, end)
+        index = len(df)
+        df.loc[index, 'start'] = start
+        df.loc[index, 'end'] = end
+        for key, value in subset.mean().round(decimals).iteritems():
+            df.loc[index, key] = value
+    df = df.set_index('end')
+    return df   
 
 class Aethalometer(object):
     def __init__(self, datafile, model = 'AE33'): # datafile is a valid filepointer
@@ -283,15 +319,11 @@ class Aethalometer(object):
             'massfl'
             ]
 
-        self.BCKeys = ['BC1', 'BC2', 'BC3', 'BC4', 'BC5', 'BC6', 'BC7']
-        self.BCKey = 'BC6'
-
         if model == 'AE33':
             columns = AE33
             separator = " "
             skiprows = 8
             append_text = ""
-            self.BCKeys.append('BB')
         elif model == 'AE31':
             columns = AE31
             separator = ","
@@ -346,6 +378,10 @@ class Aethalometer(object):
             'BC7': 950
             }
 
+        self.BCKeys = ['BC1', 'BC2', 'BC3', 'BC4', 'BC5', 'BC6', 'BC7']
+
+        self.BCKey = 'BC6'
+
         #Date(yyyy/MM/dd); Time(hh:mm:ss)
         self.df = pd.read_csv(
             datafile,               # relative python path to subdirectory
@@ -388,7 +424,8 @@ if __name__ == "__main__":
     parser.add_argument('--intervals', required=False, dest='CSV', type=argparse.FileType('r'),
                         help='csv file with start and end timestamps columns. '
                              'First row must be the column names (i.e. "start" and "end"). '
-                             'Uses hourly intervals if this parameter is missing.')
+                             'Uses hourly, minutely, or secondly intervals if this parameter'
+                             'is missing (as defined in config.ini).')
 
     args = parser.parse_args()
 
@@ -405,10 +442,12 @@ if __name__ == "__main__":
         config.read(config_file)
         data_path   = eval(config['GENERAL_SETTINGS']['DATA_PATH']) + '/'
         file_mask   = '*' + eval(config['GENERAL_SETTINGS']['FILE_EXT'])
+        freq        = eval(config['GENERAL_SETTINGS']['FREQ'])
     else:
         print >>sys.stderr, 'Could not find the configuration file {0}'.format(config_file)
         data_path   = os.path.abspath(os.path.abspath(os.path.dirname(sys.argv[0]))) + "/"
         file_mask   = '*.dat'
+        freq        = 'HOURLY'
 
     if not args.datafile:
         list_of_events = glob.glob(data_path + file_mask) # * means all if need specific format then *.csv
@@ -426,9 +465,14 @@ if __name__ == "__main__":
     if args.interval:
         ### Output the csv file with the average values per interval
         if args.CSV:
-            interval_df = calculate_intervals(args.CSV, mydata)
+            interval_df = calculate_intervals_csv(args.CSV, mydata)
         else:
-            interval_df = calculate_hourly_intervals(mydata)
+            if freq == 'SECONDLY':
+                interval_df = calculate_secondly_intervals(mydata)
+            elif freq == 'MINUTELY':
+                interval_df = calculate_minutely_intervals(mydata)
+            else:
+                interval_df = calculate_hourly_intervals(mydata)
         columns = interval_df.columns.values
         print "end," + ",".join(columns)
         units = (mydata.units[key] for key in columns if key in mydata.units)
