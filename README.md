@@ -21,7 +21,7 @@ The script can also output raw data.
 
 5. Install python requirements:
 ```bash
-$ pip install -r extras/requirements.txt
+$ pip install -r requirements.txt
 ```
 
 ### **Usage**
