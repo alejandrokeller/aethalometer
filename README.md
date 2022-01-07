@@ -45,7 +45,7 @@ The calculated averaged interval-data for BC1-BC7 and BB are printed by the comm
 $ aeth.py sample.dat > averaged_data.csv
 ```
 
-The plots, generated using `matplotlib`, are *NOT* automatically saved. They can be saved from the GUI interface.
+The plots, generated using `matplotlib`, are *NOT* automatically saved. Use the GUI for text editing and saving. Several formats are possible.
 
 Hourly interval example:
 ![Aethalometer data, hourly](boxplot.png)
