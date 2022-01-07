@@ -6,9 +6,20 @@
 #                                (one wavelength, use BC6 for eBC at 880nm)
 # calculate_intervals_csv(intervalfile, data): calculates the mean BC value
 #                                (all wavelengths) for time intervals
-#                                defined on a intervalfile, data is an
-#                                Aethalometer object
-#
+#                                defined on a intervalfile.
+#                                The dataframe index musst be a 'Datetime'.
+# def calculate_hourly_intervals(data, interval = 1, decimals = 0):
+#                                Calculate hourly averaging groups, the interval variable sets the number of hours.
+#                                e.g. 1 for each hour, or 4 for every 4 hours.
+#                                The dataframe index musst be a 'Datetime'.
+# def calculate_minutely_intervals(data, interval = 1, decimals = 0):
+#                                Calculate hourly averaging groups, the interval variable sets the number of hours.
+#                                e.g. 1 for each minute, or 30 for every 1/2 hour.
+#                                The dataframe index musst be a 'Datetime'.
+# def calculate_secondly_intervals(data, interval = 10, decimals = 0):
+#                                Calculate hourly averaging groups, the interval variable sets the number of hours.
+#                                e.g. 10 for every 10 seconds.
+#                                The dataframe index musst be a 'Datetime'.
 
 import configparser, argparse # for argument parsing
 from dateutil.parser import parse
