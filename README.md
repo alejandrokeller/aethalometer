@@ -18,6 +18,7 @@ $ cp config config.ini
 The script searches this path for the latest file if it is used used without a file argument.
 The 'FREQ' option defines the default generated averaging interval (i.e. HOURLY, MINUTELY, SECONDLY). SECONDLY outputs intervals of 10 seconds.
 The script can also output raw data.
+
 5. Install python requirements:
 ```bash
 $ pip install -r extras/requirements.txt
