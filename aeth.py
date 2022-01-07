@@ -426,6 +426,9 @@ if __name__ == "__main__":
                              'First row must be the column names (i.e. "start" and "end"). '
                              'Uses hourly, minutely, or secondly intervals if this parameter'
                              'is missing (as defined in config.ini).')
+    parser.add_argument('--bckey', required=False, dest='bckey',
+                        help='Selects BC1 through BC7 (or BB for AE33). '
+                             'Default: BC6=880nm')
 
     args = parser.parse_args()
 
@@ -461,6 +464,9 @@ if __name__ == "__main__":
             mydata = Aethalometer(f, model = model)
         else:
             mydata.df = mydata.df.append(Aethalometer(f, model = model).df)
+            
+    if args.bckey:
+        mydata.BCKey = args.bckey.upper()
 
     if args.interval:
         ### Output the csv file with the average values per interval
@@ -482,5 +488,10 @@ if __name__ == "__main__":
     else:
         y = mydata.df[mydata.BCKey]
 
-    plotTitle = "Aethalometer ($\lambda=$" + str(mydata.wavelengths.get(mydata.BCKey)) + "nm)"
-    create_plot(y, yunits=mydata.units.get(mydata.BCKey), title=plotTitle, ytitle="Equivalent Black Carbon")
+    plotTitle = "Aethalometer Model " + model
+    if mydata.wavelengths.get(mydata.BCKey):
+        plotTitle = plotTitle + " ($\lambda=$" + str(mydata.wavelengths.get(mydata.BCKey)) + "nm)"
+        ytitle="Equivalent Black Carbon"
+    else:
+        ytitle = "Biomass Burning Fraction"
+    create_plot(y, yunits=mydata.units.get(mydata.BCKey), title=plotTitle, ytitle=ytitle)
