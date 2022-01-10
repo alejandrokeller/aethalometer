@@ -73,6 +73,12 @@ def my_days_format_function(x, pos=None):
          fmt = '%b %-d'
      label = x.strftime(fmt)
      return label
+    
+def check_positive(value):
+    ivalue = int(value)
+    if ivalue <= 0:
+        raise argparse.ArgumentTypeError("%s is an invalid positive int value" % value)
+    return ivalue
 
 def hour_rounder(t):
     # Rounds to nearest hour by adding a timedelta hour if minute >= 30
@@ -435,7 +441,7 @@ if __name__ == "__main__":
     parser.add_argument('--freq', required=False, dest='FREQ', choices=['raw', 'hourly', 'minutely', 'secondly'],
                         help='Overides the interval frequency defined in the INI-file. Options are \'raw\' (no data averaging), '
                              '\'hourly\', \'minutely\', \'secondly\'.')
-    parser.add_argument('--ilength', required=False, dest='ILEN', type=int, choices=xrange(0, 1000),
+    parser.add_argument('--ilength', required=False, dest='ILEN', type=check_positive,
                         help='Overrides the interval length definded by the INI-file. '
                              'The length used in combination with the --freq variable '
                              '(e.g. INTERVAL: 10 would result in averaging of 10 hours, minutes or seconds)')
@@ -502,7 +508,7 @@ if __name__ == "__main__":
         interval = True              # use intervals defined in INI-file
         
     if args.ILEN:
-        interval_l = args.ILEN       # overide INI-file averaging intervals   
+        interval_l = int(args.ILEN)  # overide INI-file averaging intervals   
         
 
 #    if args.interval:
