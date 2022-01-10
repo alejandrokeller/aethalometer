@@ -457,11 +457,18 @@ if __name__ == "__main__":
         data_path   = eval(config['GENERAL_SETTINGS']['DATA_PATH']) + '/'
         file_mask   = '*' + eval(config['GENERAL_SETTINGS']['FILE_EXT'])
         freq        = eval(config['GENERAL_SETTINGS']['FREQ'])
+        interval_l  = eval(config['GENERAL_SETTINGS']['INTERVAL'])
+        if not interval_l:
+            if freq == 'SECONDLY':
+                interval_l = 10
+            else:
+                interval_l = 1
     else:
         print >>sys.stderr, 'Could not find the configuration file {0}'.format(config_file)
         data_path   = os.path.abspath(os.path.abspath(os.path.dirname(sys.argv[0]))) + "/"
         file_mask   = '*.dat'
         freq        = 'HOURLY'
+        interval_l  = 1
 
     if not args.datafile:
         list_of_events = glob.glob(data_path + file_mask) # * means all if need specific format then *.csv
