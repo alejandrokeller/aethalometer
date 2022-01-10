@@ -505,7 +505,8 @@ if __name__ == "__main__":
         interval_l = args.ILEN       # overide INI-file averaging intervals   
         
 
-    if args.interval:
+#    if args.interval:
+    if interval:
         ### Output the csv file with the average values per interval
         if args.CSV:
             interval_df = calculate_intervals_csv(args.CSV, mydata)
