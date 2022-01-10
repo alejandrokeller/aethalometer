@@ -435,7 +435,7 @@ if __name__ == "__main__":
     parser.add_argument('--freq', required=False, dest='FREQ', choices=['raw', 'hourly', 'minutely', 'secondly'],
                         help='Overides the interval frequency defined in the INI-file. Options are \'raw\' (no data averaging), '
                              '\'hourly\', \'minutely\', \'secondly\'.')
-    parser.add_argument('--ilength', required=False, dest=ILEN, type=int, choices=xrange(0, 1000),
+    parser.add_argument('--ilength', required=False, dest='ILEN', type=int, choices=xrange(0, 1000),
                         help='Overrides the interval length definded by the INI-file. '
                              'The length used in combination with the --freq variable '
                              '(e.g. INTERVAL: 10 would result in averaging of 10 hours, minutes or seconds)')
