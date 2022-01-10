@@ -496,7 +496,7 @@ if __name__ == "__main__":
     if args.FREQ == 'raw':
         interval = False             # use raw data
     elif args.FREQ:                  # overide INI-file averaging frequency   
-        freq = args.FREQ
+        freq = args.FREQ.upper()
         interval = True
     else:
         interval = True              # use intervals defined in INI-file
