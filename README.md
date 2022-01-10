@@ -36,11 +36,11 @@ $ pip install -r requirements.txt
 |--inifile INI  | Path to an alternative configuration file|
 |--ae33         | Uses file format for AE33 datafiles (default)|
 |--ae31         | Uses file format for AE31 datafiles|
-|--iON          | Calculates average values for given intervals, and plot average values (default)|
-|--iOFF         | Do not calculate intervals; plot all datapoints|
+|--freq         | Overides the interval frequency defined in the INI-file. Options are 'raw' (no data averaging), 'hourly', 'minutely', 'secondly'.|
+|--ilength      | Overrides the interval length definded by the INI-file. The length used in combination with the --freq variable (e.g. INTERVAL: 10 would result in averaging of 10 hours, minutes or seconds)|
 |--intervals CSV| csv file with start and end timestamps columns. First row must be the column names (i.e. "start" and "end"). Uses hourly, minutely, or secondly intervals if this parameteris missing (as defined in config.ini)|
 |--bckey BCKEY  | Selects the variable for the generated plot. Possible values: BC1 through BC7 (and BB for AE33). Default: BC6=880nm|
-| file(s)       | path to file(s) to be plotted. If several files are given, they will be joined into a single dataframe. If empty, the script looks for the latest file in the default data directory defined in the inifile.|  
+| file(s)       | path to file(s) to be plotted. If several files are given, they will be joined into a single dataframe. If empty, the script looks for the latest file in the default data directory defined in the inifile or by --freq.|  
 
 The calculated averaged interval-data for BC1-BC7 and BB are printed by the command. Use `>` to save the data:
 ```bash
