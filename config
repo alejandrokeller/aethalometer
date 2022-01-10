@@ -2,3 +2,4 @@
 DATA_PATH: '/home/pi/aethalometer/data'
 FILE_EXT: '.txt'
 FREQ: 'HOURLY'
+INTERVAL: 1
