@@ -492,11 +492,11 @@ if __name__ == "__main__":
             interval_df = calculate_intervals_csv(args.CSV, mydata)
         else:
             if freq == 'SECONDLY':
-                interval_df = calculate_secondly_intervals(mydata)
+                interval_df = calculate_secondly_intervals(mydata, interval = interval_l)
             elif freq == 'MINUTELY':
-                interval_df = calculate_minutely_intervals(mydata)
+                interval_df = calculate_minutely_intervals(mydata, interval = interval_l)
             else:
-                interval_df = calculate_hourly_intervals(mydata)
+                interval_df = calculate_hourly_intervals(mydata, interval = interval_l)
         columns = interval_df.columns.values
         print "end," + ",".join(columns)
         units = (mydata.units[key] for key in columns if key in mydata.units)
