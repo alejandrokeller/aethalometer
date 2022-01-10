@@ -55,7 +55,7 @@ Hourly interval example:
 Minutely interval example:
 ![Aethalometer data, minutely](boxplot-minutes.png)
 
-### Object and functuions defined in the aeth.py
+### Object and functions defined in the aeth.py
 
 | Argument | Description |
 | --- | --- |
