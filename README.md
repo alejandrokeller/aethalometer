@@ -26,7 +26,8 @@ $ pip install -r requirements.txt
 
 ### **Usage**
 
-`aeth.py [-h] [--inifile INI] [--ae33 | --ae31] [--iON | --iOFF]
+`aeth.py [-h] [--inifile INI] [--ae33 | --ae31]
+               [--freq {raw,hourly,minutely,secondly}] [--ilength ILEN]
                [--intervals CSV] [--bckey BCKEY]
                [file [file ...]]`
                
