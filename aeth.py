@@ -2,23 +2,30 @@
 # python script for Aethalometer files files
 #
 # Aethalometer(datafile, model): Object for to contain datafiles (models 'AE33' or 'AE31')
+#                                self.df contains a datetime indexed dataframe.
+#                                The object returns dataframe subset with the function getSubset(self, start, end),
+#                                where 'start' and 'end' are datetime values 
 # create_plot(y):                function can be used to plot the data
 #                                (one wavelength, use BC6 for eBC at 880nm)
 # calculate_intervals_csv(intervalfile, data): calculates the mean BC value
 #                                (all wavelengths) for time intervals
 #                                defined on a intervalfile.
+#                                'data' is an object capable of returning a dataframe subset via self.getSubset() function.
 #                                The dataframe index musst be a 'Datetime'.
 # def calculate_hourly_intervals(data, interval = 1, decimals = 0):
 #                                Calculate hourly averaging groups, the interval variable sets the number of hours.
 #                                e.g. 1 for each hour, or 4 for every 4 hours.
+#                                'data' is an object capable of returning a dataframe subset via self.getSubset() function.
 #                                The dataframe index musst be a 'Datetime'.
 # def calculate_minutely_intervals(data, interval = 1, decimals = 0):
 #                                Calculate hourly averaging groups, the interval variable sets the number of hours.
 #                                e.g. 1 for each minute, or 30 for every 1/2 hour.
+#                                'data' is an object capable of returning a dataframe subset via self.getSubset() function.
 #                                The dataframe index musst be a 'Datetime'.
 # def calculate_secondly_intervals(data, interval = 10, decimals = 0):
 #                                Calculate hourly averaging groups, the interval variable sets the number of hours.
 #                                e.g. 10 for every 10 seconds.
+#                                'data' is an object capable of returning a dataframe subset via self.getSubset() function.
 #                                The dataframe index musst be a 'Datetime'.
 
 import configparser, argparse # for argument parsing
