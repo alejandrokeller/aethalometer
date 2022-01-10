@@ -54,3 +54,14 @@ Hourly interval example:
 
 Minutely interval example:
 ![Aethalometer data, minutely](boxplot-minutes.png)
+
+### Object and functuions defined in the aeth.py
+
+| Argument | Description |
+| --- | --- |
+| Aethalometer(datafile, model) | Object for importing and containing Aethalometer datafiles (models 'AE33' or 'AE31') |
+| create_plot(y)                | Function that creates a box-plot. Optional parameters are x (default None, in this case the 'y' Dataframe index is used as 'x'), yunits ('ng/m$^3$'), \[plot\] title ("Aethalometer"), and ytitle ('eBC'). |
+| calculate_intervals_csv(intervalfile, data)| calculates the average values for a 'data' dataframe based on a CSV file. The dataframe index musst be a 'Datetime'. |
+| calculate_hourly_intervals(data, interval = 1, decimals = 0) | Calculate hourly averaging groups, the interval variable sets the number of hours. e.g. 1 for each hour, or 4 for every 4 hours. The dataframe index musst be a 'Datetime'. |
+| calculate_minutely_intervals(data, interval = 1, decimals = 0) | Calculate hourly averaging groups, the interval variable sets the number of hours. e.g. 1 for each minute, or 30 for every 1/2 hour. The dataframe index musst be a 'Datetime'. |
+| calculate_secondly_intervals(data, interval = 10, decimals = 0) | Calculate hourly averaging groups, the interval variable sets the number of hours. e.g. 10 for every 10 seconds. The dataframe index musst be a 'Datetime'. |
