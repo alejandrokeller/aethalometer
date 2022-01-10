@@ -493,7 +493,7 @@ if __name__ == "__main__":
     if args.bckey:
         mydata.BCKey = args.bckey.upper()
         
-    if args.FREQ == 'raw' or not :
+    if args.FREQ == 'raw':
         interval = False             # use raw data
     elif args.FREQ:                  # overide INI-file averaging frequency   
         freq = args.FREQ
