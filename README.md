@@ -16,8 +16,8 @@ $ cp config config.ini
 ```
 4. Edit the config.ini file by adding the default data path and file extension (e.g. ".dat").
 The script searches this path for the latest file if it is used used without a file argument.
-The 'FREQ' option defines the default generated averaging interval (i.e. HOURLY, MINUTELY, SECONDLY). SECONDLY outputs intervals of 10 seconds.
-The script can also output raw data.
+The 'FREQ' option defines the default generated averaging interval (i.e. HOURLY, MINUTELY, SECONDLY). 'INTERVAL' defines the interval length used in combination with the 'FREQ' variable (e.g. INTERVAL: 10 would result in averaging of 10 hours, minutes or seconds).
+The script outputs raw data if --ioff is used and no --intervals CSV file defined.
 
 5. Install python requirements:
 ```bash
