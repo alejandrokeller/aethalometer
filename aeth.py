@@ -425,18 +425,25 @@ if __name__ == "__main__":
     model_parser.add_argument('--ae31', action='store_true',
                               help='Uses file format for AE31 datafiles')
     parser.set_defaults(ae33=True)
-    interval_parser = parser.add_mutually_exclusive_group(required=False)
-    interval_parser.add_argument('--iON', action='store_true', dest='interval',
-                                 help='Calculates average values for given intervals, '
-                                      'and plot average values (default)')
-    interval_parser.add_argument('--iOFF', action='store_false', dest='interval',
-                                 help='Do not calculate intervals; plot all datapoints')
-    parser.set_defaults(interval=True)
+#    interval_parser = parser.add_mutually_exclusive_group(required=False)
+#    interval_parser.add_argument('--iON', action='store_true', dest='interval',
+#                                 help='Calculates average values for given intervals, '
+#                                      'and plot average values (default)')
+#    interval_parser.add_argument('--iOFF', action='store_false', dest='interval',
+#                                 help='Do not calculate intervals; plot all datapoints')
+#    parser.set_defaults(interval=True)
+    parser.add_argument('--freq', required=False, dest='FREQ', choices=['raw', 'hourly', 'minutely', 'secondly'],
+                        help='Overides the interval frequency defined in the INI-file. Options are \'raw\' (no data averaging), '
+                             '\'hourly\', \'minutely\', \'secondly\'.')
+    parser.add_argument('--ilength', required=False, dest=ILEN, type=int, choices=xrange(0, 1000),
+                        help='Overrides the interval length definded by the INI-file. '
+                             'The length used in combination with the --freq variable '
+                             '(e.g. INTERVAL: 10 would result in averaging of 10 hours, minutes or seconds)')
     parser.add_argument('--intervals', required=False, dest='CSV', type=argparse.FileType('r'),
                         help='csv file with start and end timestamps columns. '
                              'First row must be the column names (i.e. "start" and "end"). '
                              'Uses hourly, minutely, or secondly intervals if this parameter'
-                             'is missing (as defined in config.ini).')
+                             'is missing (as defined in config.ini or by --freq).')
     parser.add_argument('--bckey', required=False, dest='bckey',
                         help='Selects BC1 through BC7 (or BB for AE33). '
                              'Default: BC6=880nm')
@@ -485,6 +492,18 @@ if __name__ == "__main__":
             
     if args.bckey:
         mydata.BCKey = args.bckey.upper()
+        
+    if args.FREQ == 'raw' or not :
+        interval = False             # use raw data
+    elif args.FREQ:                  # overide INI-file averaging frequency   
+        freq = args.FREQ
+        interval = True
+    else:
+        interval = True              # use intervals defined in INI-file
+        
+    if args.ILEN:
+        interval_l = args.ILEN       # overide INI-file averaging intervals   
+        
 
     if args.interval:
         ### Output the csv file with the average values per interval
