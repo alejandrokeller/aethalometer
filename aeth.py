@@ -41,6 +41,7 @@ import matplotlib.pyplot as plt
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from matplotlib.ticker import FuncFormatter
+from matplotlib.cbook import boxplot_stats
 
 def my_date_formater(ax, delta):
     if delta.days < 3:
@@ -146,7 +147,9 @@ def create_plot(y, x=None, yunits='ng/m$^3$', title="Aethalometer", ytitle='eBC'
     meanpointprops = dict(marker='D')
     ax_box.boxplot(y.dropna(), showmeans=True, meanprops=meanpointprops)
     ax_box.set_ylim(ax_scatter.get_ylim())
-    mu = y.mean()
+    [box_info] = boxplot_stats(y)
+    median = box_info['med']
+    mu = box_info['mean']
     sigma = y.std()
     text = r'$\mu={0:.2f},\ \sigma={1:.3f}$'.format(mu, sigma)
     ax_box.text(1, lim1 + extra_space/2, text, horizontalalignment="center", verticalalignment="center")
