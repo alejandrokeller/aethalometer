@@ -33,6 +33,7 @@ from dateutil.parser import parse
 import sys, time, os, glob
 from dateutil import rrule
 from datetime import datetime, timedelta
+import platform
 
 import pandas as pd
 from pandas.plotting import register_matplotlib_converters
@@ -73,13 +74,17 @@ def my_date_formater(ax, delta):
         ax.set(xlabel='date')
 
 def my_days_format_function(x, pos=None):
-     x = mdates.num2date(x)
-     if pos == 0:
-         fmt = '%b %d\n%Y'
-     else:
-         fmt = '%b %-d'
-     label = x.strftime(fmt)
-     return label
+    dt = mdates.num2date(x)
+    if pos == 0:
+        fmt = '%b %d\n%Y'
+    else:
+        # Use platform-specific day formatting
+        if platform.system() == 'Windows':
+            fmt = '%b %#d'
+        else:
+            fmt = '%b %-d'
+    label = dt.strftime(fmt)
+    return label
     
 def check_positive(value):
     ivalue = int(value)
@@ -160,7 +165,7 @@ def calculate_intervals_csv(intervalfile, data, decimals = 0):
                      parse_dates=['start','end'])
     for index, row in df.iterrows():
         subset = data.getSubset(row['start'], row['end'])
-        for key, value in subset.mean().round(decimals).iteritems():
+        for key, value in subset.mean().round(decimals).items():
             df.loc[index, key] = value
     df = df.set_index('end')
     return df
@@ -176,7 +181,7 @@ def calculate_hourly_intervals(data, interval = 1, decimals = 0):
         index = len(df)
         df.loc[index, 'start'] = start
         df.loc[index, 'end'] = end
-        for key, value in subset.mean().round(decimals).iteritems():
+        for key, value in subset.mean().round(decimals).items():
             df.loc[index, key] = value
     df = df.set_index('end')
     return df
@@ -192,7 +197,7 @@ def calculate_minutely_intervals(data, interval = 1, decimals = 0):
         index = len(df)
         df.loc[index, 'start'] = start
         df.loc[index, 'end'] = end
-        for key, value in subset.mean().round(decimals).iteritems():
+        for key, value in subset.mean().round(decimals).items():
             df.loc[index, key] = value
     df = df.set_index('end')
     return df
@@ -208,7 +213,7 @@ def calculate_secondly_intervals(data, interval = 10, decimals = 0):
         index = len(df)
         df.loc[index, 'start'] = start
         df.loc[index, 'end'] = end
-        for key, value in subset.mean().round(decimals).iteritems():
+        for key, value in subset.mean().round(decimals).items():
             df.loc[index, key] = value
     df = df.set_index('end')
     return df   
@@ -416,8 +421,8 @@ class Aethalometer(object):
             skiprows=skiprows       # Skip the first 8 rows of the file
         )
 
-        #self.df['Datetime'] = pd.to_datetime(self.df['Date']) + pd.to_timedelta(self.df['Time'])
-        self.df['Datetime'] = pd.to_datetime(self.df['Date'] + " " + self.df['Time'], infer_datetime_format=True)
+        #self.df['Datetime'] = pd.to_datetime(self.df['Date'] + " " + self.df['Time'], infer_datetime_format=True)
+        self.df['Datetime'] = pd.to_datetime(self.df['Date'] + " " + self.df['Time'])
         self.df = self.df.set_index('Datetime')
 
     def getSubset(self, start, end):
@@ -464,10 +469,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.ae31:
-        print >>sys.stderr, "using AE31 file structure"
+        print("using AE31 file structure", file=sys.stderr)
         model = 'AE31'
     elif args.ae33:
-        print >>sys.stderr, "using AE33 file structure"
+        print("using AE33 file structure", file=sys.stderr)
         model = 'AE33'
 
     config_file = args.INI
@@ -484,7 +489,7 @@ if __name__ == "__main__":
             else:
                 interval_l = 1
     else:
-        print >>sys.stderr, 'Could not find the configuration file {0}'.format(config_file)
+        print('Could not find the configuration file {0}'.format(config_file), file=sys.stderr)
         data_path   = os.path.abspath(os.path.abspath(os.path.dirname(sys.argv[0]))) + "/"
         file_mask   = '*.dat'
         freq        = 'HOURLY'
@@ -497,11 +502,12 @@ if __name__ == "__main__":
 
     mydata = False
     for f in args.datafile:
-        print >>sys.stderr, 'loading file: {0}'.format(f.name)
+        print('loading file: {0}'.format(f.name), file=sys.stderr)
         if not mydata:
             mydata = Aethalometer(f, model = model)
         else:
-            mydata.df = mydata.df.append(Aethalometer(f, model = model).df)
+            #mydata.df = mydata.df.append(Aethalometer(f, model = model).df)
+            mydata.df = pd.concat([mydata.df, Aethalometer(f, model = model).df])            
             
     if args.bckey:
         mydata.BCKey = args.bckey.upper()
@@ -531,10 +537,10 @@ if __name__ == "__main__":
             else:
                 interval_df = calculate_hourly_intervals(mydata, interval = interval_l)
         columns = interval_df.columns.values
-        print "end," + ",".join(columns)
+        print("end," + ",".join(columns))
         units = (mydata.units[key] for key in columns if key in mydata.units)
-        print "-,-," + ",".join(units)
-        print interval_df.to_csv(header=False)
+        print("-,-," + ",".join(units))
+        print(interval_df.to_csv(header=False))
         y = interval_df[mydata.BCKey]
     else:
         y = mydata.df[mydata.BCKey]
